@@ -5,6 +5,8 @@
 #include <vector>
 #include <memory>
 
+#include "InputReader.h"
+
 using namespace std;
 
 class Block
@@ -15,20 +17,25 @@ public:
 
   int ID[2];
 
-  int xPos;
-  int yPos;
+  double xPos;
+  double yPos;
 
-  int xVel;
-  int yVel;
+  double xVel = 0; //Om du faar noen feil i naermeste fremtid, sjekk her
+  double yVel = 0;
 
-  int xForce;
-  int yForce;
+  double xForce = 0;
+  double yForce = 0;
 
   vector<shared_ptr<Block>> neighbors;
+  InputReader* inputReader;
+  vector<double> eqDistModifier; //Modifies the equilibrium distance
+  vector<double> springConstModifier; //Modifies the spring constant
 
 
-  Block(int xID_, int yID_, double x, double y);
+  Block(int xID_, int yID_, InputReader* &input);
+  ~Block();
   void fillNeighbors(vector<shared_ptr<Block>> &blocks);
+  virtual void calculateForces();
 
 };
 

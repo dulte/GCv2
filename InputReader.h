@@ -20,8 +20,12 @@ public:
   double k;
   double d;
 
+  double eta;
+
   int writeFrequency;
   int test;
+
+  double downPushForce;
 
   InputReader();
 

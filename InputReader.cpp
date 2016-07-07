@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "InputReader.h"
 #include "getVar.h"
 
@@ -19,7 +21,13 @@ InputReader::InputReader()
   m = M/numberOfBlocks;
   d = L/blockWidth;
 
+  eta = sqrt(0.1*m*k);
+
   writeFrequency = pGV->get("writeFrequency");
   test = pGV->get("test");
+
+  downPushForce = pGV->get("downPushForce");
+
+  delete pGV;
 
 }
