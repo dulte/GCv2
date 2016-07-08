@@ -19,6 +19,9 @@ public:
   double m;
   double k;
   double d;
+  double B;
+  double totalHeight;
+  double totalWidth;
 
   double eta;
 

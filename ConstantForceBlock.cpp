@@ -13,8 +13,8 @@ using namespace std;
 ConstantForceBlock::ConstantForceBlock(int xID_, int yID_, InputReader* &input,double xFactor, double yFactor)
 : Block(xID_,yID_,input)
 {
-  xConstForce = xFactor*inputReader->downPushForce;
-  yConstForce = yFactor*inputReader->downPushForce;
+  xConstForce = xFactor*inputReader->downPushForce/(inputReader->blockWidth);
+  yConstForce = yFactor*inputReader->downPushForce/(inputReader->blockHeight);
 
 }
 

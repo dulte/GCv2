@@ -20,6 +20,11 @@ InputReader::InputReader()
   M = pGV->get("M");
   m = M/numberOfBlocks;
   d = L/blockWidth;
+  B = pGV->get("B");
+
+  totalWidth = (blockWidth-1)*d;
+  totalHeight = (blockHeight-1)*d;
+
 
   eta = sqrt(0.1*m*k);
 

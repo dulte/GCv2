@@ -1,16 +1,17 @@
-height 11
+height 21
 width 21
 L 0.14
 M 0.12
-k 2.3e6
+k 13500000.000002
 nu 10.0
 dt 1e-7
-tStop .1
+tStop .5
 writeFrequency 100
 test 0
+B 0.006
 
 #Top Block Variables(0.0714)
-downPushForce 10
+downPushForce 1
 
 #Connector Variables(0.00714)
 connMass 0.001
