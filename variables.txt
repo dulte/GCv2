@@ -5,7 +5,7 @@ M 0.12
 k 13500000.000002
 nu 10.0
 dt 1e-7
-tStop .1
+tStop 1
 writeFrequency 100
 test 0
 B 0.006
@@ -13,7 +13,7 @@ B 0.006
 E 3e9
 
 #Top Block Variables(0.0714)
-downPushForce 1
+downPushForce 100
 
 #Connector Variables(0.00714)
 connMass 0.001
@@ -22,6 +22,6 @@ dynamicCoeff 0.17
 N .007
 stickTime 0.002
 
-#Pusher Variables(4e-4)
+#Pusher Variables(4e-4)(4e6)
 vPusher 4e-4
 kPusher 4e6

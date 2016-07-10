@@ -11,6 +11,8 @@
 #include "ConstantForceBlock.h"
 #include "CheckProgression.h"
 #include "BottomBlock.h"
+#include "Pusher.h"
+#include "FrictionBlock.h"
 
 
 using namespace std;
@@ -28,6 +30,7 @@ System::System(InputReader* &input)
   outFileVelocity.open("output/velocity.bin", ios::out | ios::binary);
   outFilePusher.open("output/pusher.bin", ios::out | ios::binary);
   outFileNormalForce.open("output/normalforce.bin" ,ios::out | ios::binary);
+  outFileState.open("output/state.bin",ios::out | ios::binary);
 
 
 }
@@ -35,12 +38,14 @@ System::System(InputReader* &input)
 System::~System()
 {
   delete checkProgress;
+  delete pusher;
   outFilePositions.close();
   outFileVelocity.close();
 
   outFileForce.close();
   outFilePusher.close();
   outFileNormalForce.close();
+  outFileState.close();
 }
 
 void System::init()
@@ -55,30 +60,35 @@ void System::init()
   {
     for (int j = 0; j < inputReader->blockWidth; j++)
     {
-      // if (i == inputReader->blockHeight-1)
-      // {
-      //   blocks.push_back(shared_ptr<Block>(new ConstantForceBlock(j,i,inputReader,0,-0.5)));
-      // }
-      // else if (i == 0)
-      // {
-      //   blocks.push_back(shared_ptr<Block>(new BottomBlock(j,i,inputReader)));
-      // }
-      // else
-      // {
-      //   blocks.push_back(shared_ptr<Block>(new Block(j,i,inputReader)));
-      // }
-      if (j == inputReader->blockWidth-1)
+      if (i == inputReader->blockHeight-1)
       {
-        blocks.push_back(shared_ptr<Block>(new ConstantForceBlock(j,i,inputReader,0,0)));
+        blocks.push_back(shared_ptr<Block>(new ConstantForceBlock(j,i,inputReader,0,-0.5)));
       }
-      else if (j == 0)
+      else if (i == 0)
       {
-        blocks.push_back(shared_ptr<Block>(new ConstantForceBlock(j,i,inputReader,0,0)));
+
+        blocks.push_back(shared_ptr<Block>(new FrictionBlock(j,i,inputReader)));
+        if (j == 0)
+        {
+          pusher = new Pusher(j,i,inputReader);
+        }
       }
       else
       {
         blocks.push_back(shared_ptr<Block>(new Block(j,i,inputReader)));
       }
+      // if (j == inputReader->blockWidth-1)
+      // {
+      //   blocks.push_back(shared_ptr<Block>(new ConstantForceBlock(j,i,inputReader,0,0)));
+      // }
+      // else if (j == 0)
+      // {
+      //   blocks.push_back(shared_ptr<Block>(new ConstantForceBlock(j,i,inputReader,0,0)));
+      // }
+      // else
+      // {
+      //   blocks.push_back(shared_ptr<Block>(new Block(j,i,inputReader)));
+      // }
       //blocks.push_back(shared_ptr<Block>(new Block(j,i,inputReader)));
 
     }
@@ -103,6 +113,7 @@ void System::run()
   double positions[inputReader->blockWidth];
   double force[inputReader->blockWidth];
   double normalForce[inputReader->blockWidth];
+  double state[inputReader->blockWidth];
 
 
   //Initalizating the object that shows progression
@@ -119,7 +130,7 @@ void System::run()
   cout << "Simulating " << inputReader->tStop << " Seconds" << endl;
 
   //Can push the first blocks to check the internal propeties of the system
-  pokeSide(0.5);
+  pokeSide(0);
 
 
   //Main Loop:
@@ -139,6 +150,10 @@ void System::run()
     for (shared_ptr<Block> block: blocks)
     {
       block->calculateForces();
+      if (block->xID == pusher->xID && block->yID == pusher->yID)
+      {
+        block->xForce += pusher->getPusherForce(block->xPos);
+      }
     }
 
 
@@ -162,6 +177,7 @@ void System::run()
         velocity[block->xID] = block->xVel;
         force[block->xID] = block->xForce;
         normalForce[block->xID] = block->returnNormalForce();
+        state[block->xID] = block->getState();
 
 
       }
@@ -181,6 +197,7 @@ void System::run()
       writeArrayToFile(outFileVelocity,velocity,inputReader->blockWidth);
       writeArrayToFile(outFileForce,force, inputReader->blockWidth);
       writeArrayToFile(outFileNormalForce, normalForce, inputReader->blockWidth);
+      writeArrayToFile(outFileState,state,inputReader->blockWidth);
     }
 
 

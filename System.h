@@ -5,6 +5,7 @@
 #include "Block.h"
 #include "InputReader.h"
 #include "CheckProgression.h"
+#include "Pusher.h"
 
 using namespace std;
 
@@ -19,8 +20,11 @@ public:
   ofstream outFileVelocity;
   ofstream outFilePusher;
   ofstream outFileNormalForce;
+  ofstream outFileState;
 
   CheckProgression* checkProgress;
+
+  Pusher* pusher;
   //ofstream outFileParameters;
 
   //Pointer made to hold data arrays

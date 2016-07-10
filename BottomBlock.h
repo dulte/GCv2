@@ -1,3 +1,7 @@
+#ifndef BOTTOMBLOCK_H
+#define BOTTOMBLOCK_H
+
+
 #include <vector>
 #include <memory>
 #include <cmath>
@@ -18,3 +22,5 @@ public:
   void calculateForces();
   double returnNormalForce();
 };
+
+#endif

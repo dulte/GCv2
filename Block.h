@@ -38,6 +38,7 @@ public:
   virtual void calculateForces();
 
   virtual double returnNormalForce();
+  virtual int getState();
 
 };
 

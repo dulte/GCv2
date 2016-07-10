@@ -15,12 +15,12 @@ InputReader::InputReader()
   dt = pGV->get("dt");
   tStop = pGV->get("tStop");
 
-  //k = pGV->get("k");
+
   E = pGV->get("E");
   L = pGV->get("L");
   M = pGV->get("M");
   m = M/(numberOfBlocks);
-  cout << m << endl;
+
   d = L/blockWidth;
   B = pGV->get("B");
 
@@ -36,6 +36,14 @@ InputReader::InputReader()
   test = pGV->get("test");
 
   downPushForce = pGV->get("downPushForce");
+
+  vPusher = pGV->get("vPusher");
+  kPusher = pGV->get("kPusher");
+
+  staticCoeff = pGV->get("staticCoeff");
+  dynamicCoeff = pGV->get("dynamicCoeff");
+
+  stickTime = pGV->get("stickTime");
 
   delete pGV;
 

@@ -31,6 +31,14 @@ public:
 
   double downPushForce;
 
+  double vPusher;
+  double kPusher;
+
+  double staticCoeff;
+  double dynamicCoeff;
+
+  double stickTime;
+
   InputReader();
 
 };
