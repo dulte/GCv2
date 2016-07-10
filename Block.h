@@ -37,6 +37,8 @@ public:
   void fillNeighbors(vector<shared_ptr<Block>> &blocks);
   virtual void calculateForces();
 
+  virtual double returnNormalForce();
+
 };
 
 #endif

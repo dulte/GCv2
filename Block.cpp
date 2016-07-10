@@ -67,9 +67,15 @@ void Block::calculateForces()
     xForce += inputReader->k*springConstModifier[i]*(length - inputReader->d*eqDistModifier[i])*deltaX/length;
     yForce += inputReader->k*springConstModifier[i]*(length - inputReader->d*eqDistModifier[i])*deltaY/length;
 
-    xForce += -10*inputReader->eta*springConstModifier[i]*(this->xVel - neighbors[i]->xVel);
-    yForce += -10*inputReader->eta*springConstModifier[i]*(this->yVel - neighbors[i]->yVel);
+    xForce += -inputReader->eta*springConstModifier[i]*(this->xVel - neighbors[i]->xVel);
+    yForce += -inputReader->eta*springConstModifier[i]*(this->yVel - neighbors[i]->yVel);
 
   }
 
 }
+
+
+
+
+//Virtual methods
+double Block::returnNormalForce(){return 0;}

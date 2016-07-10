@@ -15,12 +15,16 @@ InputReader::InputReader()
   dt = pGV->get("dt");
   tStop = pGV->get("tStop");
 
-  k = pGV->get("k");
+  //k = pGV->get("k");
+  E = pGV->get("E");
   L = pGV->get("L");
   M = pGV->get("M");
-  m = M/numberOfBlocks;
+  m = M/(numberOfBlocks);
+  cout << m << endl;
   d = L/blockWidth;
   B = pGV->get("B");
+
+  k = (3./4.)*B*E;
 
   totalWidth = (blockWidth-1)*d;
   totalHeight = (blockHeight-1)*d;

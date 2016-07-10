@@ -1,14 +1,16 @@
-height 21
-width 21
+height 11
+width 11
 L 0.14
 M 0.12
 k 13500000.000002
 nu 10.0
 dt 1e-7
-tStop .5
+tStop .1
 writeFrequency 100
 test 0
 B 0.006
+
+E 3e9
 
 #Top Block Variables(0.0714)
 downPushForce 1

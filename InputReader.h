@@ -22,6 +22,7 @@ public:
   double B;
   double totalHeight;
   double totalWidth;
+  double E;
 
   double eta;
 

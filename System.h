@@ -4,6 +4,7 @@
 
 #include "Block.h"
 #include "InputReader.h"
+#include "CheckProgression.h"
 
 using namespace std;
 
@@ -17,6 +18,9 @@ public:
   ofstream outFileForce;
   ofstream outFileVelocity;
   ofstream outFilePusher;
+  ofstream outFileNormalForce;
+
+  CheckProgression* checkProgress;
   //ofstream outFileParameters;
 
   //Pointer made to hold data arrays
@@ -30,7 +34,7 @@ public:
   void run();
   void init();
 
-  int checkProgress(double time, double tStop, int percent,double curretenTime, double start);
+  //int checkProgress(double time, double tStop, int percent,double curretenTime, double start);
   void writeArrayToFile(ofstream & outFile, double * array, int numBlocks);
   void pokeSide(double factor);
 
