@@ -19,7 +19,7 @@ public:
 
 
 
-  Pusher(int x, int y, InputReader* &input);
+  Pusher(int x, int y,double start, InputReader* &input);
 
   void movePusher();
   double getPusherForce();

@@ -31,6 +31,7 @@ System::System(InputReader* &input)
   outFilePusher.open("output/pusher.bin", ios::out | ios::binary);
   outFileNormalForce.open("output/normalforce.bin" ,ios::out | ios::binary);
   outFileState.open("output/state.bin",ios::out | ios::binary);
+  outFileBlocksSlipped.open("output/slippedblocks.bin",ios::out | ios::binary);
 
   outFileVariablesUsed.open("output/variablesUsed.txt");
 
@@ -52,6 +53,7 @@ System::~System()
   outFileState.close();
   outFilePosXYZ.close();
   outFileVariablesUsed.close();
+  outFileBlocksSlipped.close();
 }
 
 void System::init()
@@ -74,10 +76,10 @@ void System::init()
       {
 
         blocks.push_back(shared_ptr<Block>(new FrictionBlock(j,i,inputReader)));
-        if (j == 0)
-        {
-          pusher = new Pusher(j,i,inputReader);
-        }
+        // if (j == 0)
+        // {
+        //   pusher = new Pusher(j,i,inputReader);
+        // }
       }
       else
       {
@@ -124,6 +126,7 @@ void System::run()
   double state[inputReader->blockWidth];
 
   vector<double> pusherVec;
+  vector<double> slippedBlocks;
 
 
   //Initalizating the object that shows progression
@@ -143,21 +146,24 @@ void System::run()
 
   //Can push the first blocks to check the internal propeties of the system
   pokeSide(0);
-  // double dY = (inputReader->downPushForce/inputReader->blockWidth)/inputReader->groundSpringCoeff;
-  //
-  // for(shared_ptr<Block> block: blocks)
-  // {
-  //   block->yPos -= dY;
-  // }
 
 
   //Main Loop:
   while (t<inputReader->tStop)
   {
+
+
     if (t>=inputReader->restBeforePushTime && !pusherRestMessageRead)
     {
       cout << "Beginning to Push" << endl;
       pusherRestMessageRead = true;
+      for (shared_ptr<Block> block: blocks)
+      {
+        if (block->xID == 0 && block->yID == 0) //Initalizating pusher
+        {
+          pusher = new Pusher(block->yID,block->xID,block->xPos,inputReader);
+        }
+      }
     }
     if (t>=inputReader->restBeforeConnectTime && !connectorRestMessageRead)
     {
@@ -183,6 +189,7 @@ void System::run()
     for (shared_ptr<Block> block: blocks)
     {
       block->calculateForces();
+
       if (pusher != NULL){
       if ((block->xID == pusher->xID && block->yID == pusher->yID) && t >= inputReader->restBeforePushTime)
       {
@@ -226,6 +233,8 @@ void System::run()
 
 
 
+
+
     if ((counter%inputReader->writeFrequency) == 0)
     {
 
@@ -242,7 +251,16 @@ void System::run()
       // {
       //   outFilePosXYZ << p << " " << blocks[p]->xPos << " " << blocks[p]->yPos << " " << 0 << "\n";
       // }
-      pusherVec.push_back(pusher->getPusherForce());
+      if (pusher != NULL)
+      {
+        pusherVec.push_back(pusher->getPusherForce());
+      }
+      double k = 0;
+      for (int j = 0; j < inputReader->blockWidth; j++)
+      {
+        k+=state[j];
+      }
+      slippedBlocks.push_back(int(inputReader->blockWidth-k));
 
     }
 
@@ -279,11 +297,18 @@ void System::run()
 
   }
 
-  writeVectorToFile(outFilePusher,pusherVec);
+  if (pusherVec.size() > 0)
+  {
+    writeVectorToFile(outFilePusher,pusherVec);
+  }
+
+  writeVectorToFile(outFileBlocksSlipped,slippedBlocks);
+
+
   double dz = ((z1-z0) - (inputReader->d)*(inputReader->blockHeight-1))/inputReader->blockWidth;
   double dx = ((x1-x0) - (inputReader->d)*(inputReader->blockWidth-1))/inputReader->blockHeight;
-  cout << "Poissons Ratio ble beregnet til: " << -dz/dx << " | Forventet er: 1/3" << endl;
-  cout << "Youngs modulus ble beregnet til: " << (inputReader->downPushForce/inputReader->blockHeight)/((dx)*0.006) << " |  Forventet er: " << (4./3.)*(inputReader->k)/(0.006) <<endl;
+  cout << "Poissons Ratio ble beregnet til: " << -dx/dz << " | Forventet er: 1/3" << endl;
+  cout << "Youngs modulus ble beregnet til: " << (inputReader->downPushForce/inputReader->blockHeight)/((dz)*0.006) << " |  Forventet er: " << (4./3.)*(inputReader->k)/(0.006) <<endl;
 
   cout << "dx: " << dx << "  " << "dz: " << dz <<   endl;
 

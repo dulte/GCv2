@@ -5,7 +5,7 @@ M 0.12
 k 13500000.000002
 nu 10.0
 dt 1e-7
-tStop 4
+tStop 2
 writeFrequency 100
 test 0
 
@@ -21,9 +21,11 @@ staticCoeff 0.4
 dynamicCoeff 0.17
 N .007
 stickTime 0.002
+stickTimeStdDiv 0.0006
+numberOfConnectors 5
 
 #Pusher Variables(4e-4)(4e6)
-vPusher 4e-4
+vPusher 4e-3
 kPusher 4e6
 
 groundSpringCoeff 13500000.000002

@@ -22,6 +22,7 @@ public:
   ofstream outFileNormalForce;
   ofstream outFileState;
   ofstream outFilePosXYZ;
+  ofstream outFileBlocksSlipped;
 
   ofstream outFileVariablesUsed;
 

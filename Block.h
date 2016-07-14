@@ -43,7 +43,8 @@ public:
   void fillNeighbors(vector<shared_ptr<Block>> &blocks);
 
   void setIsPusing(bool p);
-  void setResting(bool f);
+
+  virtual void setResting(bool f);
 
 
   virtual void calculateForces();

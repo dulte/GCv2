@@ -51,6 +51,8 @@ InputReader::InputReader()
   restBeforePushTime = pGV->get("restBeforePushTime");
   restBeforeConnectTime = pGV->get("restBeforeConnectTime");
 
+  numberOfConnectors = pGV->get("numberOfConnectors");
+
   delete pGV;
 
 }
@@ -68,6 +70,8 @@ void InputReader::dumpToFile(ofstream &file)
 
   file << "Connected at " << restBeforeConnectTime << endl;
   file << "Pushed at " << restBeforePushTime << endl;
+
+  file << "Number of Connectors " << numberOfConnectors << endl;
 
 
 }

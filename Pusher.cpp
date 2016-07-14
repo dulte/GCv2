@@ -3,13 +3,13 @@
 
 using namespace std;
 
-Pusher::Pusher(int x, int y, InputReader* &input)
+Pusher::Pusher(int x, int y, double start, InputReader* &input)
 {
   xID = x;
   yID = y;
 
   inputReader = input;
-  position = xID*inputReader->d;
+  position = start;
   velocity = inputReader->vPusher;
   dt =  inputReader->dt;
   kPusher = inputReader->kPusher;

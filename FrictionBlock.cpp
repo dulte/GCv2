@@ -1,4 +1,5 @@
 #include <cmath>
+#include <vector>
 
 
 #include "FrictionBlock.h"
@@ -20,14 +21,22 @@ FrictionBlock::FrictionBlock(int xID_, int yID_, InputReader* &input)
   staticFricCoeff = inputReader->staticCoeff;
   dynamicFricCoeff = inputReader->dynamicCoeff;
 
-  std::normal_distribution<double> normDist(5,2);
 
-  cout << round(normDist(gen)) << endl;
 
-  connectorPosition = xPos;
-
+  // connectorPosition = xPos;
+  //
   dt = inputReader->dt;
-  solidificationTime = inputReader->stickTime;
+  solTimeMean = inputReader->stickTime;
+
+  std::normal_distribution<double> normDist(solTimeMean,solTimeMean/3);
+  for (int i = 0; i < inputReader->numberOfConnectors;i++)
+  {
+    t.push_back(0);
+    solidificationTime.push_back(normDist(gen));
+    // cout << solidificationTime[i] << endl;
+    state.push_back(false);
+    connectorPosition.push_back(xPos);
+  }
 
 }
 
@@ -43,51 +52,66 @@ int FrictionBlock::sign(double vx)
 void FrictionBlock::calculateForces()
 {
   BottomBlock::calculateForces();
-
-  double nf = 1000;
+  std::normal_distribution<double> normDist(solTimeMean,solTimeMean/3);
 
   k = 10*sqrt(39.2e9*normalForce);
-  springForce = -k*(this->xPos-connectorPosition);
-  dynamicFricForce = -sign(xVel)*dynamicFricCoeff*normalForce;
 
-
-  if (!resting){
-  if (state)
+  for (int i = 0; i < inputReader->numberOfConnectors;i++)
   {
-    if (abs(springForce) < staticFricCoeff*normalForce)
-    {
-      xForce += springForce;
-      //cout << xID << " "  << xPos << " " << connectorPosition  << " " << springForce << endl;
-    }
-    else
-    {
-      state = false;
-      //frictionSpringSolidificationTime = std::normal_dist<double>(solidificationTime, 0.3*solidificationTime)
-      xForce += springForce;
-    }
-  }
-  else
-  {
-    if (t<solidificationTime)
-    {
-      t += dt;
-      xForce += dynamicFricForce;
-    }
-    else
-    {
-      t = 0;
-      connectorPosition = xPos;
-      state = true;
-      xForce += dynamicFricForce;
-    }
-  }
-  }
 
+    springForce = -k*(this->xPos-connectorPosition[i]);
+    dynamicFricForce = -sign(xVel)*dynamicFricCoeff*normalForce;
+
+
+    if (!resting)
+    {
+      if (state[i])
+      {
+        if (abs(springForce) < staticFricCoeff*normalForce)
+        {
+          xForce += springForce;
+          //cout << xID << " "  << xPos << " " << connectorPosition  << " " << springForce << endl;
+        }
+        else
+        {
+          state[i] = false;
+          solidificationTime[i] = normDist(gen);
+          //frictionSpringSolidificationTime = std::normal_dist<double>(solidificationTime, 0.3*solidificationTime)
+          xForce += springForce;
+        }
+      }
+      else
+      {
+        if (t[i]<solidificationTime[i])
+        {
+          t[i] += dt;
+          xForce += dynamicFricForce;
+        }
+        else
+        {
+          t[i] = 0;
+          connectorPosition[i] = xPos;
+          state[i] = true;
+          xForce += dynamicFricForce;
+        }
+      }
+    }
+  }
 }
 
 
 
 int FrictionBlock::getState()
 {
-  return int(state);
+  return int(state[0]);
+}
+
+void FrictionBlock::setResting(bool f)
+{
+  resting = f;
+  for (int i = 0; i<inputReader->numberOfConnectors;i++)
+  {
+    connectorPosition[i] = xPos;
+    state[i] = true;
+  }
 }

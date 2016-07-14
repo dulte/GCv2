@@ -46,6 +46,8 @@ public:
   double restBeforePushTime;
   double restBeforeConnectTime;
 
+  int numberOfConnectors;
+
   InputReader();
 
   void dumpToFile(ofstream &file);
