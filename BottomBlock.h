@@ -15,7 +15,7 @@ using namespace std;
 class BottomBlock : public Block
 {
 public:
-  double groundSpringForce = 1e6;
+  double groundSpringCoeff;
   double normalForce = 0;
 
   BottomBlock(int xID_, int yID_, InputReader* &input);

@@ -1,3 +1,5 @@
+#include <random>
+
 #include "InputReader.h"
 #include "BottomBlock.h"
 #include "Block.h"
@@ -6,10 +8,15 @@ class FrictionBlock : public BottomBlock
 {
 public:
 
+  static std::random_device rd;
+  static std::mt19937 gen;
+
+
+
   InputReader* inputReader;
   double k;
   double connectorPosition;
-  bool state = true;
+  bool state = false;
 
   double staticFricCoeff;
   double dynamicFricCoeff;
@@ -22,9 +29,13 @@ public:
 
 
 
+
+
   FrictionBlock(int xID_, int yID_, InputReader* &input);
   void calculateForces();
   int sign(double vx);
+
+
 
   int getState();
 

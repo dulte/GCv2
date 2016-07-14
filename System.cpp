@@ -32,6 +32,10 @@ System::System(InputReader* &input)
   outFileNormalForce.open("output/normalforce.bin" ,ios::out | ios::binary);
   outFileState.open("output/state.bin",ios::out | ios::binary);
 
+  outFileVariablesUsed.open("output/variablesUsed.txt");
+
+  outFilePosXYZ.open("output/pos.xyz");
+
 
 }
 
@@ -46,6 +50,8 @@ System::~System()
   outFilePusher.close();
   outFileNormalForce.close();
   outFileState.close();
+  outFilePosXYZ.close();
+  outFileVariablesUsed.close();
 }
 
 void System::init()
@@ -62,7 +68,7 @@ void System::init()
     {
       if (i == inputReader->blockHeight-1)
       {
-        blocks.push_back(shared_ptr<Block>(new ConstantForceBlock(j,i,inputReader,0,-0.5)));
+        blocks.push_back(shared_ptr<Block>(new ConstantForceBlock(j,i,inputReader,0,-1)));
       }
       else if (i == 0)
       {
@@ -79,11 +85,11 @@ void System::init()
       }
       // if (j == inputReader->blockWidth-1)
       // {
-      //   blocks.push_back(shared_ptr<Block>(new ConstantForceBlock(j,i,inputReader,0,0)));
+      //   blocks.push_back(shared_ptr<Block>(new ConstantForceBlock(j,i,inputReader,1,0)));
       // }
       // else if (j == 0)
       // {
-      //   blocks.push_back(shared_ptr<Block>(new ConstantForceBlock(j,i,inputReader,0,0)));
+      //   blocks.push_back(shared_ptr<Block>(new ConstantForceBlock(j,i,inputReader,-1,0)));
       // }
       // else
       // {
@@ -100,6 +106,8 @@ void System::init()
     block->fillNeighbors(blocks);
   }
 
+  inputReader->dumpToFile(outFileVariablesUsed);
+
   cout << "Done Initalization" << endl;
 }
 
@@ -115,6 +123,8 @@ void System::run()
   double normalForce[inputReader->blockWidth];
   double state[inputReader->blockWidth];
 
+  vector<double> pusherVec;
+
 
   //Initalizating the object that shows progression
   checkProgress = new CheckProgression(inputReader->tStop, inputReader->test);
@@ -122,6 +132,8 @@ void System::run()
   //Some variables used in the Main Loop
   double t = 0;
   unsigned int counter = 0;
+  bool pusherRestMessageRead = false;
+  bool connectorRestMessageRead = false;
 
 
 
@@ -131,11 +143,32 @@ void System::run()
 
   //Can push the first blocks to check the internal propeties of the system
   pokeSide(0);
+  // double dY = (inputReader->downPushForce/inputReader->blockWidth)/inputReader->groundSpringCoeff;
+  //
+  // for(shared_ptr<Block> block: blocks)
+  // {
+  //   block->yPos -= dY;
+  // }
 
 
   //Main Loop:
   while (t<inputReader->tStop)
   {
+    if (t>=inputReader->restBeforePushTime && !pusherRestMessageRead)
+    {
+      cout << "Beginning to Push" << endl;
+      pusherRestMessageRead = true;
+    }
+    if (t>=inputReader->restBeforeConnectTime && !connectorRestMessageRead)
+    {
+      cout << "Connecting Connectors" << endl;
+      connectorRestMessageRead = true;
+      for (shared_ptr<Block> block: blocks)
+      {
+        block->setResting(false);
+      }
+
+    }
 
 
 
@@ -150,9 +183,12 @@ void System::run()
     for (shared_ptr<Block> block: blocks)
     {
       block->calculateForces();
-      if (block->xID == pusher->xID && block->yID == pusher->yID)
+      if (pusher != NULL){
+      if ((block->xID == pusher->xID && block->yID == pusher->yID) && t >= inputReader->restBeforePushTime)
       {
-        block->xForce += pusher->getPusherForce(block->xPos);
+        block->xForce += pusher->calculatePusher(block->xPos);
+
+      }
       }
     }
 
@@ -198,7 +234,19 @@ void System::run()
       writeArrayToFile(outFileForce,force, inputReader->blockWidth);
       writeArrayToFile(outFileNormalForce, normalForce, inputReader->blockWidth);
       writeArrayToFile(outFileState,state,inputReader->blockWidth);
+
+
+      // outFilePosXYZ << inputReader->numberOfBlocks <<"\n"  << t << "\n";
+      //
+      // for (int p = 0; p < blocks.size(); p++)
+      // {
+      //   outFilePosXYZ << p << " " << blocks[p]->xPos << " " << blocks[p]->yPos << " " << 0 << "\n";
+      // }
+      pusherVec.push_back(pusher->getPusherForce());
+
     }
+
+
 
 
     t += inputReader->dt;
@@ -226,8 +274,12 @@ void System::run()
     {
       z1 = block->yPos;
     }
+
+
+
   }
 
+  writeVectorToFile(outFilePusher,pusherVec);
   double dz = ((z1-z0) - (inputReader->d)*(inputReader->blockHeight-1))/inputReader->blockWidth;
   double dx = ((x1-x0) - (inputReader->d)*(inputReader->blockWidth-1))/inputReader->blockHeight;
   cout << "Poissons Ratio ble beregnet til: " << -dz/dx << " | Forventet er: 1/3" << endl;
@@ -238,15 +290,15 @@ void System::run()
 
 
 
-  for (shared_ptr<Block> block: blocks)
-  {
-    if (block->yID == 0){
-    cout << "-----------------------" << endl;
-    cout << block->xID << "  " << block->yID << "  |  " << velocity[block->xID] << "  " << block->xVel << endl;
-    cout << block->xID << "  " << block->yID << "  |  " << positions[block->xID] << "  " << block->xPos << endl;
-    cout << block->xID << "  " << block->yID << "  |  " << force[block->xID] << "  " << block->xForce << endl;
-    }
-  }
+  // for (shared_ptr<Block> block: blocks)
+  // {
+  //   if (block->yID == 0){
+  //   cout << "-----------------------" << endl;
+  //   cout << block->xID << "  " << block->yID << "  |  " << velocity[block->xID] << "  " << block->xVel << endl;
+  //   cout << block->xID << "  " << block->yID << "  |  " << positions[block->xID] << "  " << block->xPos << endl;
+  //   cout << block->xID << "  " << block->yID << "  |  " << force[block->xID] << "  " << block->xForce << endl;
+  //   }
+  // }
 
 
 
@@ -269,4 +321,15 @@ void System::pokeSide(double factor)
       block->xPos = factor*inputReader->d;
     }
   }
+}
+
+void System::writeVectorToFile(ofstream &file, vector<double> v)
+{
+  double a[v.size()];
+
+  for (int i = 0; i < v.size(); i++)
+  {
+    a[i] = v[i];
+  }
+  writeArrayToFile(file,a,int(v.size()));
 }

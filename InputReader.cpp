@@ -1,4 +1,5 @@
 #include <cmath>
+#include <iostream>
 
 #include "InputReader.h"
 #include "getVar.h"
@@ -45,6 +46,28 @@ InputReader::InputReader()
 
   stickTime = pGV->get("stickTime");
 
+  groundSpringCoeff = pGV->get("groundSpringCoeff");
+
+  restBeforePushTime = pGV->get("restBeforePushTime");
+  restBeforeConnectTime = pGV->get("restBeforeConnectTime");
+
   delete pGV;
+
+}
+
+void InputReader::dumpToFile(ofstream &file)
+{
+  file << "Nx " << blockWidth << endl;
+  file << "Nz " << blockHeight << endl;
+
+  file << "dt " << dt << endl;
+  file << "tStop " << tStop << endl;
+
+  file << "k " << k << endl;
+  file << "normal force " << downPushForce << endl;
+
+  file << "Connected at " << restBeforeConnectTime << endl;
+  file << "Pushed at " << restBeforePushTime << endl;
+
 
 }

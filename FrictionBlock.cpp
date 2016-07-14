@@ -1,5 +1,6 @@
 #include <cmath>
 
+
 #include "FrictionBlock.h"
 #include "InputReader.h"
 #include "BottomBlock.h"
@@ -8,12 +9,20 @@
 
 using namespace std;
 
+
+random_device FrictionBlock::rd;
+mt19937 FrictionBlock::gen(FrictionBlock::rd());
+
 FrictionBlock::FrictionBlock(int xID_, int yID_, InputReader* &input)
 : BottomBlock::BottomBlock(xID_,yID_,input)
 {
   inputReader = input;
   staticFricCoeff = inputReader->staticCoeff;
   dynamicFricCoeff = inputReader->dynamicCoeff;
+
+  std::normal_distribution<double> normDist(5,2);
+
+  cout << round(normDist(gen)) << endl;
 
   connectorPosition = xPos;
 
@@ -35,19 +44,25 @@ void FrictionBlock::calculateForces()
 {
   BottomBlock::calculateForces();
 
-  k = sqrt(39.2e9*normalForce);
-  springForce = -k*(xPos-connectorPosition);
+  double nf = 1000;
+
+  k = 10*sqrt(39.2e9*normalForce);
+  springForce = -k*(this->xPos-connectorPosition);
   dynamicFricForce = -sign(xVel)*dynamicFricCoeff*normalForce;
 
+
+  if (!resting){
   if (state)
   {
     if (abs(springForce) < staticFricCoeff*normalForce)
     {
       xForce += springForce;
+      //cout << xID << " "  << xPos << " " << connectorPosition  << " " << springForce << endl;
     }
     else
     {
       state = false;
+      //frictionSpringSolidificationTime = std::normal_dist<double>(solidificationTime, 0.3*solidificationTime)
       xForce += springForce;
     }
   }
@@ -65,6 +80,7 @@ void FrictionBlock::calculateForces()
       state = true;
       xForce += dynamicFricForce;
     }
+  }
   }
 
 }

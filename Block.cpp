@@ -58,6 +58,15 @@ void Block::calculateForces()
   xForce = 0;
   yForce = 0;
 
+  if (isPushing)
+  {
+    overDampingCoeff = 1;
+  }
+  else
+  {
+    overDampingCoeff = 10;
+  }
+
   for (int i = 0; i < neighbors.size();i++)
   {
     double deltaX = neighbors[i]->xPos - this->xPos;
@@ -67,11 +76,21 @@ void Block::calculateForces()
     xForce += inputReader->k*springConstModifier[i]*(length - inputReader->d*eqDistModifier[i])*deltaX/length;
     yForce += inputReader->k*springConstModifier[i]*(length - inputReader->d*eqDistModifier[i])*deltaY/length;
 
-    xForce += -10*inputReader->eta*springConstModifier[i]*(this->xVel - neighbors[i]->xVel);
-    yForce += -10*inputReader->eta*springConstModifier[i]*(this->yVel - neighbors[i]->yVel);
+    xForce += -overDampingCoeff*inputReader->eta*springConstModifier[i]*(this->xVel - neighbors[i]->xVel);
+    yForce += -overDampingCoeff*inputReader->eta*springConstModifier[i]*(this->yVel - neighbors[i]->yVel);
 
   }
 
+}
+
+void Block::setIsPusing(bool p)
+{
+  isPushing = p;
+}
+
+void Block::setResting(bool f)
+{
+  resting = f;
 }
 
 

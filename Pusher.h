@@ -22,7 +22,8 @@ public:
   Pusher(int x, int y, InputReader* &input);
 
   void movePusher();
-  double getPusherForce(double x);
+  double getPusherForce();
+  double calculatePusher(double x);
 
 };
 

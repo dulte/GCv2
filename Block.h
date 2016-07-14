@@ -26,6 +26,12 @@ public:
   double xForce = 0;
   double yForce = 0;
 
+  bool isPushing = false;
+
+  int overDampingCoeff = 1;
+
+  bool resting = true;
+
   vector<shared_ptr<Block>> neighbors;
   InputReader* inputReader;
   vector<double> eqDistModifier; //Modifies the equilibrium distance
@@ -35,10 +41,16 @@ public:
   Block(int xID_, int yID_, InputReader* &input);
   ~Block();
   void fillNeighbors(vector<shared_ptr<Block>> &blocks);
+
+  void setIsPusing(bool p);
+  void setResting(bool f);
+
+
   virtual void calculateForces();
 
   virtual double returnNormalForce();
   virtual int getState();
+
 
 };
 

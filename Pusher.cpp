@@ -21,8 +21,14 @@ void Pusher::movePusher()
   position += velocity*dt;
 }
 
-double Pusher::getPusherForce(double x)
+double Pusher::getPusherForce()
+{
+  return force;
+}
+
+double Pusher::calculatePusher(double x)
 {
   movePusher();
-  return kPusher*(position-x);
+  force = kPusher*(position-x);
+  return force;
 }

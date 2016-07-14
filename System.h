@@ -21,6 +21,9 @@ public:
   ofstream outFilePusher;
   ofstream outFileNormalForce;
   ofstream outFileState;
+  ofstream outFilePosXYZ;
+
+  ofstream outFileVariablesUsed;
 
   CheckProgression* checkProgress;
 
@@ -41,5 +44,6 @@ public:
   //int checkProgress(double time, double tStop, int percent,double curretenTime, double start);
   void writeArrayToFile(ofstream & outFile, double * array, int numBlocks);
   void pokeSide(double factor);
+  void writeVectorToFile(ofstream &file, vector<double> v);
 
 };

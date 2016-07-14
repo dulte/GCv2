@@ -1,6 +1,8 @@
 #ifndef INPUTREADER_H
 #define INPUTREADER_H
 
+#include <iostream>
+
 using namespace std;
 
 
@@ -39,7 +41,14 @@ public:
 
   double stickTime;
 
+  double groundSpringCoeff;
+
+  double restBeforePushTime;
+  double restBeforeConnectTime;
+
   InputReader();
+
+  void dumpToFile(ofstream &file);
 
 };
 
