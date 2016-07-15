@@ -54,7 +54,7 @@ void FrictionBlock::calculateForces()
   BottomBlock::calculateForces();
   std::normal_distribution<double> normDist(solTimeMean,solTimeMean/3);
 
-  k = 10*sqrt(39.2e9*normalForce);
+  k = sqrt(39.2e9*normalForce);
 
   for (int i = 0; i < inputReader->numberOfConnectors;i++)
   {
@@ -63,7 +63,12 @@ void FrictionBlock::calculateForces()
     dynamicFricForce = -sign(xVel)*dynamicFricCoeff*normalForce;
 
 
-    if (!resting)
+    if (resting)//!resting)f
+    {
+      state[i] = true;
+      xForce += springForce;
+    }
+    else
     {
       if (state[i])
       {

@@ -1,0 +1,9 @@
+Nx 21
+Nz 21
+dt 1e-07
+tStop 1
+k 1.35e+07
+normal force 1920
+Connected at 0.15
+Pushed at 0.3
+Number of Connectors 5

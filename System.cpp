@@ -159,9 +159,9 @@ void System::run()
       pusherRestMessageRead = true;
       for (shared_ptr<Block> block: blocks)
       {
-        if (block->xID == 0 && block->yID == 0) //Initalizating pusher
+        if (block->xID == 0 && block->yID == 2) //Initalizating pusher
         {
-          pusher = new Pusher(block->yID,block->xID,block->xPos,inputReader);
+          pusher = new Pusher(block->xID,block->yID,block->xPos,inputReader);
         }
       }
     }
