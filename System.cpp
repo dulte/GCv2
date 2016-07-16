@@ -32,6 +32,7 @@ System::System(InputReader* &input)
   outFileNormalForce.open("output/normalforce.bin" ,ios::out | ios::binary);
   outFileState.open("output/state.bin",ios::out | ios::binary);
   outFileBlocksSlipped.open("output/slippedblocks.bin",ios::out | ios::binary);
+  outFilePercentageSlipped.open("output/percentSlipped.bin",ios::out | ios::binary);
 
   outFileVariablesUsed.open("output/variablesUsed.txt");
 
@@ -54,6 +55,7 @@ System::~System()
   outFilePosXYZ.close();
   outFileVariablesUsed.close();
   outFileBlocksSlipped.close();
+  outFilePercentageSlipped.close();
 }
 
 void System::init()
@@ -124,6 +126,7 @@ void System::run()
   double force[inputReader->blockWidth];
   double normalForce[inputReader->blockWidth];
   double state[inputReader->blockWidth];
+  double percentSlipped[inputReader->blockWidth];
 
   vector<double> pusherVec;
   vector<double> slippedBlocks;
@@ -159,7 +162,7 @@ void System::run()
       pusherRestMessageRead = true;
       for (shared_ptr<Block> block: blocks)
       {
-        if (block->xID == 0 && block->yID == 2) //Initalizating pusher
+        if (block->xID == 0 && (block->yID == 0)) //Initalizating pusher
         {
           pusher = new Pusher(block->xID,block->yID,block->xPos,inputReader);
         }
@@ -221,6 +224,7 @@ void System::run()
         force[block->xID] = block->xForce;
         normalForce[block->xID] = block->returnNormalForce();
         state[block->xID] = block->getState();
+        percentSlipped[block->xID] = block->getPercentageSlipped();
 
 
       }
@@ -243,6 +247,7 @@ void System::run()
       writeArrayToFile(outFileForce,force, inputReader->blockWidth);
       writeArrayToFile(outFileNormalForce, normalForce, inputReader->blockWidth);
       writeArrayToFile(outFileState,state,inputReader->blockWidth);
+      writeArrayToFile(outFilePercentageSlipped,percentSlipped,inputReader->blockWidth);
 
 
       // outFilePosXYZ << inputReader->numberOfBlocks <<"\n"  << t << "\n";

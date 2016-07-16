@@ -23,6 +23,7 @@ public:
   ofstream outFileState;
   ofstream outFilePosXYZ;
   ofstream outFileBlocksSlipped;
+  ofstream outFilePercentageSlipped;
 
   ofstream outFileVariablesUsed;
 

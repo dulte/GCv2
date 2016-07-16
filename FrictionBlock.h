@@ -44,4 +44,7 @@ public:
   void setResting(bool f);
   int getState();
 
+  int getNumberSlipped();
+  double getPercentageSlipped();
+
 };

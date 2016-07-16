@@ -54,13 +54,13 @@ void FrictionBlock::calculateForces()
   BottomBlock::calculateForces();
   std::normal_distribution<double> normDist(solTimeMean,solTimeMean/3);
 
-  k = sqrt(39.2e9*normalForce);
+  k = sqrt(39.2e9*normalForce/inputReader->numberOfConnectors);
 
   for (int i = 0; i < inputReader->numberOfConnectors;i++)
   {
 
     springForce = -k*(this->xPos-connectorPosition[i]);
-    dynamicFricForce = -sign(xVel)*dynamicFricCoeff*normalForce;
+    dynamicFricForce = -sign(xVel)*dynamicFricCoeff*normalForce/inputReader->numberOfConnectors;
 
 
     if (resting)//!resting)f
@@ -72,7 +72,7 @@ void FrictionBlock::calculateForces()
     {
       if (state[i])
       {
-        if (abs(springForce) < staticFricCoeff*normalForce)
+        if (abs(springForce) < staticFricCoeff*normalForce/inputReader->numberOfConnectors)
         {
           xForce += springForce;
           //cout << xID << " "  << xPos << " " << connectorPosition  << " " << springForce << endl;
@@ -119,4 +119,20 @@ void FrictionBlock::setResting(bool f)
     connectorPosition[i] = xPos;
     state[i] = true;
   }
+}
+
+int FrictionBlock::getNumberSlipped()
+{
+  int k = 0;
+  for (int i = 0; i<inputReader->numberOfConnectors;i++)
+  {
+    k += int(state[i]);
+  }
+  return (inputReader->numberOfConnectors - k);
+
+}
+
+double FrictionBlock::getPercentageSlipped()
+{
+  return double(getNumberSlipped())/inputReader->numberOfConnectors;
 }

@@ -52,6 +52,9 @@ public:
   virtual double returnNormalForce();
   virtual int getState();
 
+  virtual int getNumberSlipped();
+  virtual double getPercentageSlipped();
+
 
 };
 

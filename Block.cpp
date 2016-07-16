@@ -99,3 +99,6 @@ void Block::setResting(bool f)
 //Virtual methods
 double Block::returnNormalForce(){return 0;}
 int Block::getState(){return 0;}
+
+int Block::getNumberSlipped(){return 0;}
+double Block::getPercentageSlipped(){return 0;}
