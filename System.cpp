@@ -188,6 +188,21 @@ void System::run()
     checkProgress->showProgression(t);
     //cout << int((t/inputReader->tStop)*100) << endl;
 
+
+
+    //First part of Velocity Verlet
+    for (shared_ptr<Block> block: blocks)
+    {
+
+      block->xPos +=  block->xVel*inputReader->dt + 0.5*(block->xForce/inputReader->m)*inputReader->dt*inputReader->dt;
+      block->xVel +=  0.5*block->xForce*inputReader->dt/inputReader->m;
+
+
+      block->yPos +=  block->yVel*inputReader->dt + 0.5*(block->yForce/inputReader->m)*inputReader->dt*inputReader->dt;
+      block->yVel +=  0.5*block->yForce*inputReader->dt/inputReader->m;
+
+    }
+
     //Force calculation:
     for (shared_ptr<Block> block: blocks)
     {
@@ -203,15 +218,18 @@ void System::run()
     }
 
 
-    //Integration loop:
+    //Integration loop: Velocity Verlet second part:
     for (shared_ptr<Block> block: blocks)
     {
-      double eps = 1e-4;
-      block->xVel +=  block->xForce*inputReader->dt/inputReader->m;
-      block->xPos +=  block->xVel*inputReader->dt;
+      // double eps = 1e-4;
+      // block->xVel +=  block->xForce*inputReader->dt/inputReader->m;
+      // block->xPos +=  block->xVel*inputReader->dt;
+      //
+      // block->yVel +=  block->yForce*inputReader->dt/inputReader->m;
+      // block->yPos +=  block->yVel*inputReader->dt;
 
-      block->yVel +=  block->yForce*inputReader->dt/inputReader->m;
-      block->yPos +=  block->yVel*inputReader->dt;
+      block->xVel +=  0.5*block->xForce*inputReader->dt/inputReader->m;
+      block->yVel +=  0.5*block->yForce*inputReader->dt/inputReader->m;
 
 
 
@@ -258,7 +276,7 @@ void System::run()
       // }
       if (pusher != NULL)
       {
-        pusherVec.push_back(pusher->getPusherForce());
+        pusherVec.push_back(pusher->getPusherForce()/inputReader->downPushForce);
       }
       double k = 0;
       for (int j = 0; j < inputReader->blockWidth; j++)
@@ -316,6 +334,8 @@ void System::run()
   cout << "Youngs modulus ble beregnet til: " << (inputReader->downPushForce/inputReader->blockHeight)/((dz)*0.006) << " |  Forventet er: " << (4./3.)*(inputReader->k)/(0.006) <<endl;
 
   cout << "dx: " << dx << "  " << "dz: " << dz <<   endl;
+
+  checkProgress->dumpTimeToFile(outFileVariablesUsed);
 
 
 

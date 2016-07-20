@@ -3,6 +3,8 @@
 
 
 #include <time.h>
+#include <iostream>
+#include <fstream>
 
 class CheckProgression
 {
@@ -23,6 +25,8 @@ public:
 	CheckProgression(double stoptime, bool testing);
 	void showProgression(double t);
 	bool doneTesting(double t);
+
+	void dumpTimeToFile(std::ofstream &file);
 
 private:
 	int calculateProgression(double t, int p);

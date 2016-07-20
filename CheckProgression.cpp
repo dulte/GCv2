@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <fstream>
 
 #include <time.h>
 #include "CheckProgression.h"
@@ -43,4 +44,9 @@ bool CheckProgression::doneTesting(double t)
 	   else{return false;}
   }
   else{return false;}
+}
+
+void CheckProgression::dumpTimeToFile(ofstream &file)
+{
+	file << "Time used: " << time(&timer) - timeStarted << endl;
 }
