@@ -22,7 +22,7 @@ InputReader::InputReader()
   M = pGV->get("M");
   m = M/(numberOfBlocks);
 
-  d = L/blockWidth;
+  d = L/(blockWidth-1);
   B = pGV->get("B");
 
   k = (3./4.)*B*E;
@@ -46,7 +46,9 @@ InputReader::InputReader()
 
   stickTime = pGV->get("stickTime");
 
-  groundSpringCoeff = pGV->get("groundSpringCoeff");
+  //groundSpringCoeff = pGV->get("groundSpringCoeff");
+  groundSpringCoeff = double(k)/(2.);
+
 
   restBeforePushTime = pGV->get("restBeforePushTime");
   restBeforeConnectTime = pGV->get("restBeforeConnectTime");
@@ -72,6 +74,7 @@ void InputReader::dumpToFile(ofstream &file)
   file << "Pushed at " << restBeforePushTime << endl;
 
   file << "Number of Connectors " << numberOfConnectors << endl;
+  file << "Elastic foundation modulus " << groundSpringCoeff << endl; 
 
 
 }

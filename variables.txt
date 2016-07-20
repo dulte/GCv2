@@ -2,18 +2,19 @@ height 17
 width 31
 L 0.14
 M 0.12
+#M 0.0756
 k 13500000.000002
 nu 10.0
 dt 1e-7
-tStop 1
-writeFrequency 50
+tStop .3
+writeFrequency 100
 test 0
 
 B 0.006
 E 3e9
 
 #Top Block Variables(0.0714)
-downPushForce 1044
+downPushForce 1000
 
 #Connector Variables(0.00714)
 connMass 0.001
@@ -25,9 +26,10 @@ stickTimeStdDiv 0.0006
 numberOfConnectors 100
 
 #Pusher Variables(4e-4)(4e6)
-vPusher 4e-4
+vPusher 4e-3
 kPusher 4e6
 
 groundSpringCoeff 13500000.000002
-restBeforePushTime .15
-restBeforeConnectTime 0.1
+(6750000.000001)(13500000.000002)
+restBeforePushTime .2
+restBeforeConnectTime 0.15

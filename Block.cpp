@@ -64,7 +64,7 @@ void Block::calculateForces()
   }
   else
   {
-    overDampingCoeff = 10;
+    overDampingCoeff = 1;
   }
 
   for (int i = 0; i < neighbors.size();i++)

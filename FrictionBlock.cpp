@@ -28,7 +28,7 @@ FrictionBlock::FrictionBlock(int xID_, int yID_, InputReader* &input)
   dt = inputReader->dt;
   solTimeMean = inputReader->stickTime;
 
-  std::normal_distribution<double> normDist(solTimeMean,solTimeMean/3);
+  std::normal_distribution<double> normDist(solTimeMean,solTimeMean*0.3);
   for (int i = 0; i < inputReader->numberOfConnectors;i++)
   {
     t.push_back(0);
@@ -52,7 +52,7 @@ int FrictionBlock::sign(double vx)
 void FrictionBlock::calculateForces()
 {
   BottomBlock::calculateForces();
-  std::normal_distribution<double> normDist(solTimeMean,solTimeMean/3);
+  std::normal_distribution<double> normDist(solTimeMean,solTimeMean*0.3);
 
   k = sqrt(39.2e9*normalForce/inputReader->numberOfConnectors);
 
