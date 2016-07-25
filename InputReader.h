@@ -1,6 +1,8 @@
 #ifndef INPUTREADER_H
 #define INPUTREADER_H
 
+#include <iostream>
+
 using namespace std;
 
 
@@ -10,6 +12,7 @@ public:
   int blockHeight;
   int blockWidth;
   int numberOfBlocks;
+  int numberOfStripes;
 
   double dt;
   double tStop;
@@ -19,11 +22,36 @@ public:
   double m;
   double k;
   double d;
+  double B;
+  double totalHeight;
+  double totalWidth;
+  double E;
+
+  double eta;
 
   int writeFrequency;
   int test;
 
+  double downPushForce;
+
+  double vPusher;
+  double kPusher;
+
+  double staticCoeff;
+  double dynamicCoeff;
+
+  double stickTime;
+
+  double groundSpringCoeff;
+
+  double restBeforePushTime;
+  double restBeforeConnectTime;
+
+  int numberOfConnectors;
+
   InputReader();
+
+  void dumpToFile(ofstream &file);
 
 };
 

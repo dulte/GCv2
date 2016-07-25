@@ -1,19 +1,29 @@
 #include <vector>
 #include <memory>
 #include <cmath>
+# include <iostream>
 
 #include "Block.h"
+#include "InputReader.h"
 
 using namespace std;
 
-Block::Block(int xID_, int yID_, double x, double y){
+Block::Block(int xID_, int yID_, InputReader* &input){
+
+  inputReader = input;
+
   xID = xID_;
   yID = yID_;
 
-  xPos = x;
-  yPos = y;
+  xPos = xID*inputReader->d;
+  yPos = yID*inputReader->d;
+
 
 };
+
+Block::~Block()
+{
+}
 
 void Block::fillNeighbors(vector<shared_ptr<Block>> &blocks)
 {
@@ -27,7 +37,68 @@ void Block::fillNeighbors(vector<shared_ptr<Block>> &blocks)
     {
       if (!(dx == 0 && dy == 0)){
         neighbors.push_back(block);
+        if (dx == dy)
+        {
+          springConstModifier.push_back(0.5);
+          eqDistModifier.push_back(sqrt(2));
+        }
+        else
+        {
+          springConstModifier.push_back(1);
+          eqDistModifier.push_back(1);
+        }
       }
     }
   }
 }
+
+
+void Block::calculateForces()
+{
+  xForce = 0;
+  yForce = 0;
+
+  if (isPushing)
+  {
+    overDampingCoeff = 1;
+  }
+  else
+  {
+    overDampingCoeff = 6;
+  }
+
+  for (int i = 0; i < neighbors.size();i++)
+  {
+    double deltaX = neighbors[i]->xPos - this->xPos;
+    double deltaY = neighbors[i]->yPos - this->yPos;
+    double length = sqrt(pow(deltaX,2) + pow(deltaY,2));
+
+    xForce += inputReader->k*springConstModifier[i]*(length - inputReader->d*eqDistModifier[i])*deltaX/length;
+    yForce += inputReader->k*springConstModifier[i]*(length - inputReader->d*eqDistModifier[i])*deltaY/length;
+
+    xForce += -overDampingCoeff*inputReader->eta*springConstModifier[i]*(this->xVel - neighbors[i]->xVel);
+    yForce += -overDampingCoeff*inputReader->eta*springConstModifier[i]*(this->yVel - neighbors[i]->yVel);
+
+  }
+
+}
+
+void Block::setIsPusing(bool p)
+{
+  isPushing = p;
+}
+
+void Block::setResting(bool f)
+{
+  resting = f;
+}
+
+
+
+
+//Virtual methods
+double Block::returnNormalForce(){return 0;}
+int Block::getState(){return 0;}
+
+int Block::getNumberSlipped(){return 0;}
+double Block::getPercentageSlipped(){return 0;}
