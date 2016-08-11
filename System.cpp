@@ -46,6 +46,7 @@ System::~System()
 {
   delete checkProgress;
   delete pusher;
+  delete stateSaver;
   outFilePositions.close();
   outFileVelocity.close();
 
@@ -78,20 +79,23 @@ void System::init()
       }
       else if (i == 0)
       {
-        // blocks.push_back(shared_ptr<Block>(new FrictionBlock(j,i,inputReader)));
-        if (j%2 == 0)
-        {
-          blocks.push_back(shared_ptr<Block>(new FrictionBlock(j,i,inputReader)));
-          // if (j == 0)
-          // {
-          //   pusher = new Pusher(j,i,inputReader);
-          // }
-        }
-        else
-        {
-          blocks.push_back(shared_ptr<Block>(new BottomBlock(j,i,inputReader)));
-        }
+        blocks.push_back(shared_ptr<Block>(new FrictionBlock(j,i,inputReader)));
+        // if (j%2 == 0)
+        // {
+        //   blocks.push_back(shared_ptr<Block>(new FrictionBlock(j,i,inputReader)));
+        //
+        // }
+        // // else
+        // // {
+        // //   blocks.push_back(shared_ptr<Block>(new BottomBlock(j,i,inputReader)));
+        // // }
       }
+      // else if (i == 1)
+      // {
+      //   if (j%2 == 0){
+      //     blocks.push_back(shared_ptr<Block>(new Block(j,i,inputReader)));
+      //   }
+      // }
       else
       {
         blocks.push_back(shared_ptr<Block>(new Block(j,i,inputReader)));
@@ -151,6 +155,9 @@ void System::run()
   //Initalizating the object that shows progression
   checkProgress = new CheckProgression(inputReader->tStop, inputReader->test);
 
+  //Initalizating the object that saves/load states
+  stateSaver = new SaveState();
+
   //Some variables used in the Main Loop
   double t = 0;
   unsigned int counter = 0;
@@ -166,6 +173,10 @@ void System::run()
   //Can push the first blocks to check the internal propeties of the system
   pokeSide(0);
 
+  if (bool(inputReader->loadstate))
+  {
+    stateSaver->loadState(blocks);
+  }
 
   //Main Loop:
   while (t<inputReader->tStop)
@@ -178,7 +189,7 @@ void System::run()
       pusherRestMessageRead = true;
       for (shared_ptr<Block> block: blocks)
       {
-        if (block->xID == 0 && (block->yID == 0)) //Initalizating pusher
+        if (block->xID == 0 && (block->yID == inputReader->pusherHeight)) //Initalizating pusher
         {
           pusher = new Pusher(block->xID,block->yID,block->xPos,inputReader);
         }
@@ -225,11 +236,11 @@ void System::run()
       block->calculateForces();
 
       if (pusher != NULL){
-      if ((block->xID == pusher->xID && block->yID == pusher->yID) && t >= inputReader->restBeforePushTime)
-      {
-        block->xForce += pusher->calculatePusher(block->xPos);
+        if ((block->xID == pusher->xID && block->yID == pusher->yID) && t >= inputReader->restBeforePushTime)
+        {
+          block->xForce += pusher->calculatePusher(block->xPos);
 
-      }
+        }
       }
     }
 
@@ -359,6 +370,12 @@ void System::run()
   cout << "dx: " << dx << "  " << "dz: " << dz <<   endl;
 
   checkProgress->dumpTimeToFile(outFileVariablesUsed);
+  
+  if (inputReader->savestate == 1)
+  {
+
+    stateSaver->saveState(blocks);
+  }
 
 
 

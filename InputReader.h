@@ -31,11 +31,14 @@ public:
 
   int writeFrequency;
   int test;
+  int savestate;
+  int loadstate;
 
   double downPushForce;
 
   double vPusher;
   double kPusher;
+  int pusherHeight;
 
   double staticCoeff;
   double dynamicCoeff;

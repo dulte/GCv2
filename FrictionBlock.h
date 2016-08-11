@@ -30,6 +30,7 @@ public:
   vector<double> connectorPosition;
   vector<bool> state;
   vector<double> t;
+  vector<double> connectorVelocity;
 
 
 
@@ -39,6 +40,8 @@ public:
   FrictionBlock(int xID_, int yID_, InputReader* &input);
   void calculateForces();
   int sign(double vx);
+
+  void intergrateConnector(double force, int i);
 
 
   void setResting(bool f);

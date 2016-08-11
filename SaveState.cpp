@@ -25,6 +25,8 @@ void SaveState::saveState(vector<shared_ptr<Block>> &blocks)
   }
   outFile.close();
 
+  cout << "State Saved" << endl;
+
 }
 
 
@@ -71,5 +73,7 @@ void SaveState::loadState(vector<shared_ptr<Block>> &blocks){
     blocks[i]->xForce = xForce[i];
   }
   inFile.close();
+
+  cout << "State Loaded" << endl;
 
 }

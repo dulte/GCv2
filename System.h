@@ -6,6 +6,7 @@
 #include "InputReader.h"
 #include "CheckProgression.h"
 #include "Pusher.h"
+#include "SaveState.h"
 
 using namespace std;
 
@@ -31,6 +32,7 @@ public:
   CheckProgression* checkProgress;
 
   Pusher* pusher;
+  SaveState* stateSaver;
   //ofstream outFileParameters;
 
   //Pointer made to hold data arrays

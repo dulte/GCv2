@@ -36,11 +36,14 @@ InputReader::InputReader()
 
   writeFrequency = pGV->get("writeFrequency");
   test = pGV->get("test");
+  savestate = pGV->get("savestate");
+  loadstate = pGV->get("loadstate");
 
   downPushForce = pGV->get("downPushForce");
 
   vPusher = pGV->get("vPusher");
   kPusher = pGV->get("kPusher");
+  pusherHeight = pGV->get("pusherHeight");
 
   staticCoeff = pGV->get("staticCoeff");
   dynamicCoeff = pGV->get("dynamicCoeff");
@@ -73,6 +76,7 @@ void InputReader::dumpToFile(ofstream &file)
 
   file << "Connected at " << restBeforeConnectTime << endl;
   file << "Pushed at " << restBeforePushTime << endl;
+  file << "Pushed from block " << pusherHeight << endl;
 
   file << "Number of Connectors " << numberOfConnectors << endl;
   file << "Elastic foundation modulus " << groundSpringCoeff << endl;
